@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Chatroom = mongoose.model('Chatroom');
 
 exports.create = async (req, res) => {
+
     const {name, createdBy} = req.body;
     const nameRegex = /^[a-zA-Z\s]+$/;
     if(!name.test(name)) {

@@ -19,25 +19,27 @@ require("./models/user.js");
 require("./models/chatroom.js");
 
 const app  = require('./app')
+const server = require('http').createServer(app);
 
-const server = app.listen(3000, () => {
-    console.log('Server is up on port 3000')
-}) 
 
-const io = require('socket.io')(server);
-const jwt = require('jwt-then')
+
+const io = require('socket.io')(server, {
+    origin: "*"
+});
+const jwt = require('jwt-then');
+const { error } = require('console');
 
 io.use(async (socket, next)=> {
+    errorCheck = false;
     try {
         const token = socket.handshake.query.token;  
         const payload = await jwt.verify(token, process.env.SECRET);
         socket.userId = payload.id;
         next();
     } catch (error) {   
-        return res.status(401).send({
-            message: "Unauthorized"
-        })
+        socket.error();
     }
+    
 })
 
 io.on('connection', (socket) => {
@@ -73,3 +75,7 @@ io.on('connection', (socket) => {
     }
 })
 })
+
+server.listen(3000, "0.0.0.0",() => {
+    console.log('Server is up on port 3000')
+}) 
