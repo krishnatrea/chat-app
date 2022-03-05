@@ -52,11 +52,13 @@ exports.login = async (req, res) => {
 
     res.json({  
         message: "User logged in successfully",
-        token : token
+        token : token,
+        userId: user.id,
+        name: user.name
     })
 }
 
-exports.GETAllUsers = async (req, res) => {
+exports.GetAllUsers = async (req, res) => {
     const users = await User.find();
     res.json({
         message: "Users fetched successfully",

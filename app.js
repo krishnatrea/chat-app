@@ -6,6 +6,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json())
 app.use("/user", require('./routes/user'));
+app.use("/chat", require('./routes/chatroom'));
+
 
 
 // setup error handling middleware

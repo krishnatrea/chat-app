@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const Chatroom = mongoose.model('Chatroom');
+const User = mongoose.model('User');
 
 exports.create = async (req, res) => {
-
     const {name, createdBy} = req.body;
     const nameRegex = /^[a-zA-Z\s]+$/;
-    if(!name.test(name)) {
+    if(!nameRegex.test(name)) {
         return res.status(400).send({
             message: "Invalid name"
         });
@@ -13,28 +13,31 @@ exports.create = async (req, res) => {
     const chatroomExist = await Chatroom.findOne({name, createdBy});
     if(chatroomExist) {
         return res.status(400).send({
-            message: "Chatroom already exist"
+            message: "Chatroom already exist",
+            chatroom: chatroomExist
         });
     }
-    const chatroom = new Chatroom({name,createdBy});
+    const chatroom = new Chatroom({name,createdBy,members: [createdBy]});
 
     await chatroom.save();
 
     res.json({
         message: "Chatroom created successfully",
+        chatroom,
     });
 }
 
 exports.getAllChatrooms = async (req, res) => { 
-    const {userId} = req.params;
+    const {userId} = req.body;
+    console.log(userId);
     const checkuser = await User.findOne({_id: userId});
     if(!checkuser) {
         return res.status(400).send({
             message: "Invalid user"
         });
     }
-    const Adminchatrooms = await Chatroom.findAll({createdBy: userId});
-    const Memberchatrooms = await Chatroom.findAll({members: userId});
+    const Adminchatrooms = await Chatroom.find({createdBy: userId});
+    const Memberchatrooms = await Chatroom.find({members: userId});
     const chatrooms = [...Adminchatrooms, ...Memberchatrooms];
     res.json({
         message: "Chatrooms fetched successfully",
@@ -43,7 +46,7 @@ exports.getAllChatrooms = async (req, res) => {
 }
 
 exports.Addmember = async (req, res) => {
-    const {chatroomId, userId} = req.params;
+    const {chatroomId, userId} = req.body;
     const checkuser = await User.findOne({_id: userId});
     if(!checkuser) {
         return res.status(400).send({
@@ -56,7 +59,9 @@ exports.Addmember = async (req, res) => {
             message: "Invalid chatroom"
         });
     }
-    const chatroom = await Chatroom.findOneAndUpdate({_id: chatroomId}, {$push: {members: userId}});
+     await Chatroom.findOneAndUpdate({_id: chatroomId}, {$push: {members: userId}});
+     const chatroom = await Chatroom.findById(chatroomId);
+    
     res.json({
         message: "Member added successfully",
         chatroom
@@ -77,7 +82,7 @@ exports.createTwoUserChat = async (req, res) => {
             message: "Invalid friend"
         });
     }
-    const chatroom = await Chatroom.findOne({members: {$all: [userId, friendId]}});
+    const chatroom = await Chatroom.findOne({name: `${checkuser.name} & ${checkfriend.name}`});
     if(chatroom) {
         return res.json({
             message: "Chatroom already exist",

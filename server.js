@@ -59,7 +59,9 @@ io.on('connection', (socket) => {
     })
     socket.on("chatroomMessage", async ({chatroomId, message}) => {
         if(message.trim().lenght > 0 ) {
+            console.log(`User ${socket.userId} sent message to room ${chatroomId}`)
             const user = await User.find({id: socket.userId});
+            console.log(message)
             const message = new Message({
                 chatroom : chatroomId,
                 user : user.name,
