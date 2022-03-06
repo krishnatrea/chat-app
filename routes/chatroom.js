@@ -5,8 +5,8 @@ const auth = require('../middleware/auth');
 const { route } = require('./user');
 
 router.post("/create", auth, chatroomController.create);
-router.get("/getallchatrooms", auth, chatroomController.getAllChatrooms);
-router.get("/addmember", auth, chatroomController.Addmember);
+router.post("/getallchatrooms", auth, chatroomController.getAllChatrooms);
+router.post("/addmember", auth, chatroomController.Addmember);
 
 // router.post("/login", userController.login);
 // router.post("/register", userController.register);

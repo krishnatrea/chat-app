@@ -14,8 +14,8 @@ mongoose.connection.once("open" , ()=> {
     console.log("Mongoose connected successfully"); 
 })
 
-require("./models/message.js");
-require("./models/user.js");
+const Message = require("./models/message.js");
+const User = require("./models/user.js");
 require("./models/chatroom.js");
 
 const app  = require('./app')
@@ -58,13 +58,13 @@ io.on('connection', (socket) => {
         console.log(`User ${socket.userId} leaved room ${chatroomId}`);
     })
     socket.on("chatroomMessage", async ({chatroomId, message}) => {
-        if(message.trim().lenght > 0 ) {
+        console.log("message", message);    
             console.log(`User ${socket.userId} sent message to room ${chatroomId}`)
-            const user = await User.find({id: socket.userId});
+            const user = await User.findOne({id: socket.userId});
             console.log(message)
-            const message = new Message({
+            const messagtosave = new Message({
                 chatroom : chatroomId,
-                user : user.name,
+                user : user.id,
                 message : message
             });
 
@@ -73,8 +73,8 @@ io.on('connection', (socket) => {
             name: user.name,
             userId: socket.userId
         });
-        await message.save(); 
-    }
+        await messagtosave.save(); 
+
 })
 })
 

@@ -36,9 +36,9 @@ exports.getAllChatrooms = async (req, res) => {
             message: "Invalid user"
         });
     }
-    const Adminchatrooms = await Chatroom.find({createdBy: userId});
+    // const Adminchatrooms = await Chatroom.find({createdBy: userId});
     const Memberchatrooms = await Chatroom.find({members: userId});
-    const chatrooms = [...Adminchatrooms, ...Memberchatrooms];
+    const chatrooms = [ ...Memberchatrooms];
     res.json({
         message: "Chatrooms fetched successfully",
         chatrooms
