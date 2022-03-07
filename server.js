@@ -30,6 +30,7 @@ const jwt = require('jwt-then');
 const { error } = require('console');
 
 io.use(async (socket, next)=> {
+    console.log("try to connect ")
     errorCheck = false;
     try {
         const token = socket.handshake.query.token;  
@@ -37,7 +38,7 @@ io.use(async (socket, next)=> {
         socket.userId = payload.id;
         next();
     } catch (error) {   
-        socket.error();
+      console.log(error)
     }
     
 })
@@ -78,6 +79,6 @@ io.on('connection', (socket) => {
 })
 })
 
-server.listen(3000, "0.0.0.0",() => {
-    console.log('Server is up on port 3000')
+server.listen(8000, "192.168.0.104",() => {
+    console.log('Server is up on port 8000')
 }) 

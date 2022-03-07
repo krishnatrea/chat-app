@@ -29,7 +29,6 @@ exports.create = async (req, res) => {
 
 exports.getAllChatrooms = async (req, res) => { 
     const {userId} = req.body;
-    console.log(userId);
     const checkuser = await User.findOne({_id: userId});
     if(!checkuser) {
         return res.status(400).send({
